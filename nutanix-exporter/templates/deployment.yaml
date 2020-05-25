@@ -1,0 +1,32 @@
+{{- range $cluster := .Values.clusters }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nutanix-exporter.fullname" $ }}-{{ $cluster  }}
+  labels:
+    {{- include "nutanix-exporter.labels" $ | nindent 4 }}
+    cluster: {{ $cluster | quote  }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "nutanix-exporter.selectorLabels" $ | nindent 6 }}
+      cluster: {{ $cluster | quote  }}
+  template:
+    metadata:
+      annotations:
+        {{- include "nutanix-exporter.annotations" $ | nindent 8 }}
+      labels:
+        {{- include "nutanix-exporter.selectorLabels" $ | nindent 8 }}
+        cluster: {{ $cluster | quote  }}
+    spec:
+      containers:
+        - name: {{ $.Chart.Name }}
+          image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $.Values.service.port }}
+              protocol: TCP
+---
+{{- end }}

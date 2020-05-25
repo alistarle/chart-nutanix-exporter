@@ -1,0 +1,12 @@
+image:
+  repository: prom/node-exporter
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 9100
+
+clusters:
+  - cluster1
+  - cluster2
+  - cluster3
